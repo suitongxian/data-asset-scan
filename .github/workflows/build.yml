@@ -1,0 +1,64 @@
+name: Build App
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, windows-latest]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Get version from package.json
+        id: get-version
+        shell: bash
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Configure npm mirror
+        run: |
+          echo "electron_mirror=https://npmmirror.com/mirrors/electron/" >> .npmrc
+          echo "electron_builder_binaries_mirror=https://npmmirror.com/mirrors/electron-builder-binaries/" >> .npmrc
+
+      - name: Install dependencies
+        run: yarn install --ignore-engines
+
+      - name: Rebuild better-sqlite3
+        run: npm rebuild better-sqlite3
+
+      - name: Build Vue and Electron
+        run: |
+          yarn vue-tsc
+          yarn vite build
+
+      - name: Build with electron-builder
+        run: npx electron-builder
+        env:
+          ELECTRON_MIRROR: https://npmmirror.com/mirrors/electron/
+          ELECTRON_BUILDER_BINARIES_MIRROR: https://npmmirror.com/mirrors/electron-builder-binaries/
+
+      - name: List release directory
+        shell: bash
+        run: ls -la release/ || true
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.os }}-build
+          path: release/${{ steps.get-version.outputs.version }}/

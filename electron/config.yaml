@@ -1,0 +1,19 @@
+# 应用配置文件
+
+# 默认管控列表 - 需要扫描的文件后缀
+control_type: .doc,.ppt,.docx,.pdf
+# 安全操作码
+save_code: 007
+
+# 日常盘点扫描间隔时间 分钟
+daily_scan_interval: 60
+
+# 扫描区域 /表示全盘 默认为用户主目录
+#scan_area_path: /Users/tommy/temp/
+
+
+# 扫描时排除的目录 逗号分割
+scan_exclude_dir: ''
+
+#上传服务地址
+upload_server_url: http://127.0.0.1:3002/

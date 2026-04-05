@@ -1,0 +1,53 @@
+{
+  "name": "data-asset-scan",
+  "private": true,
+  "version": "0.1.6",
+  "type": "module",
+  "scripts": {
+    "dev": "LOG_LEVEL=DEBUG npx @electron/rebuild -f && vite",
+    "web": "cross-env VITE_WEB_ONLY=true vite",
+    "build": "vue-tsc && vite build && electron-builder",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "electron:dev": "vite",
+    "electron:service": "electron . --service",
+    "postinstall": "npm rebuild better-sqlite3"
+  },
+  "dependencies": {
+    "@mdi/font": "^7.4.47",
+    "better-sqlite3": "^12.6.2",
+    "chart.js": "^4.5.1",
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
+    "fdir": "^6.5.0",
+    "p-queue": "^9.1.0",
+    "tlsh": "^1.0.8",
+    "vue": "^3.4.21",
+    "vue-chartjs": "^5.3.3",
+    "vue-router": "^5.0.3",
+    "vuetify": "^4.0.1",
+    "yaml": "^2.8.2"
+  },
+  "devDependencies": {
+    "@electron/rebuild": "^4.0.3",
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@vitejs/plugin-vue": "^5.2.4",
+    "@vue/test-utils": "^2.4.6",
+    "cross-env": "^10.1.0",
+    "electron": "^30.0.1",
+    "electron-builder": "^24.13.3",
+    "happy-dom": "^20.8.3",
+    "typescript": "^5.2.2",
+    "vite": "^5.1.6",
+    "vite-plugin-electron": "^0.28.6",
+    "vite-plugin-electron-renderer": "^0.14.5",
+    "vite-plugin-static-copy": "^3.2.0",
+    "vite-plugin-vuetify": "^2.1.3",
+    "vitest": "^1.6.0",
+    "vue-tsc": "^2.0.26"
+  },
+  "main": "dist-electron/main.js"
+}
