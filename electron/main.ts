@@ -39,7 +39,7 @@ let configService: ConfigService | null = null
 let databaseService: DatabaseService | null = null
 
 function createMenu() {
-  const template: Electron.MenuItemConstructorOptions[] = []
+  const template = []
 
   // macOS 应用菜单
   if (process.platform === 'darwin') {
@@ -48,24 +48,24 @@ function createMenu() {
       submenu: [
         {
           label: `关于 ${app.name}`,
-          role: 'about'
+          role: 'about' as const
         },
-        { type: 'separator' },
+        { type: 'separator' as const },
         {
           label: '隐藏',
           accelerator: 'Command+H',
-          role: 'hide'
+          role: 'hide' as const
         },
         {
           label: '隐藏其他',
           accelerator: 'Command+Shift+H',
-          role: 'hideOthers'
+          role: 'hideOthers' as const
         },
         {
           label: '显示全部',
-          role: 'unhide'
+          role: 'unhide' as const
         },
-        { type: 'separator' },
+        { type: 'separator' as const },
         {
           label: '退出',
           accelerator: 'Command+Q',
@@ -83,7 +83,7 @@ function createMenu() {
         ? {
             label: '关闭',
             accelerator: 'Command+W',
-            role: 'close'
+            role: 'close' as const
           }
         : {
             label: '退出',
@@ -94,42 +94,45 @@ function createMenu() {
   })
 
   // 编辑菜单
+  const editSubmenu: any[] = [
+    { label: '撤销', accelerator: 'CmdOrCtrl+Z', role: 'undo' as const },
+    { label: '重做', accelerator: 'CmdOrCtrl+Shift+Z', role: 'redo' as const },
+    { type: 'separator' as const },
+    { label: '剪切', accelerator: 'CmdOrCtrl+X', role: 'cut' as const },
+    { label: '复制', accelerator: 'CmdOrCtrl+C', role: 'copy' as const },
+    { label: '粘贴', accelerator: 'CmdOrCtrl+V', role: 'paste' as const }
+  ]
+  if (process.platform === 'darwin') {
+    editSubmenu.push(
+      { label: '粘贴并匹配样式', accelerator: 'CmdOrCtrl+Shift+V', role: 'pasteAndMatchStyle' as const },
+      { label: '删除', role: 'delete' as const },
+      { label: '全选', accelerator: 'CmdOrCtrl+A', role: 'selectAll' as const }
+    )
+  } else {
+    editSubmenu.push(
+      { label: '删除', role: 'delete' as const },
+      { type: 'separator' as const },
+      { label: '全选', accelerator: 'CmdOrCtrl+A', role: 'selectAll' as const }
+    )
+  }
   template.push({
     label: '编辑',
-    submenu: [
-      { label: '撤销', accelerator: 'CmdOrCtrl+Z', role: 'undo' },
-      { label: '重做', accelerator: 'CmdOrCtrl+Shift+Z', role: 'redo' },
-      { type: 'separator' },
-      { label: '剪切', accelerator: 'CmdOrCtrl+X', role: 'cut' },
-      { label: '复制', accelerator: 'CmdOrCtrl+C', role: 'copy' },
-      { label: '粘贴', accelerator: 'CmdOrCtrl+V', role: 'paste' },
-      ...(process.platform === 'darwin'
-        ? [
-            { label: '粘贴并匹配样式', accelerator: 'CmdOrCtrl+Shift+V', role: 'pasteAndMatchStyle' },
-            { label: '删除', role: 'delete' },
-            { label: '全选', accelerator: 'CmdOrCtrl+A', role: 'selectAll' },
-          ]
-        : [
-            { label: '删除', role: 'delete' },
-            { type: 'separator' },
-            { label: '全选', accelerator: 'CmdOrCtrl+A', role: 'selectAll' },
-          ])
-    ]
+    submenu: editSubmenu
   })
 
   // 视图菜单
   template.push({
     label: '视图',
     submenu: [
-      { label: '重新加载', accelerator: 'CmdOrCtrl+R', role: 'reload' },
-      { label: '强制重新加载', accelerator: 'CmdOrCtrl+Shift+R', role: 'forceReload' },
-      { label: '开发者工具', accelerator: 'CmdOrCtrl+Shift+I', role: 'toggleDevTools' },
-      { type: 'separator' },
-      { label: '实际大小', accelerator: 'CmdOrCtrl+0', role: 'resetZoom' },
-      { label: '放大', accelerator: 'CmdOrCtrl+Plus', role: 'zoomIn' },
-      { label: '缩小', accelerator: 'CmdOrCtrl+-', role: 'zoomOut' },
-      { type: 'separator' },
-      { label: '全屏', accelerator: 'CmdOrCtrl+F', role: 'togglefullscreen' }
+      { label: '重新加载', accelerator: 'CmdOrCtrl+R', role: 'reload' as const },
+      { label: '强制重新加载', accelerator: 'CmdOrCtrl+Shift+R', role: 'forceReload' as const },
+      { label: '开发者工具', accelerator: 'CmdOrCtrl+Shift+I', role: 'toggleDevTools' as const },
+      { type: 'separator' as const },
+      { label: '实际大小', accelerator: 'CmdOrCtrl+0', role: 'resetZoom' as const },
+      { label: '放大', accelerator: 'CmdOrCtrl+Plus', role: 'zoomIn' as const },
+      { label: '缩小', accelerator: 'CmdOrCtrl+-', role: 'zoomOut' as const },
+      { type: 'separator' as const },
+      { label: '全屏', accelerator: 'CmdOrCtrl+F', role: 'togglefullscreen' as const }
     ]
   })
 
@@ -138,10 +141,10 @@ function createMenu() {
     template.push({
       label: '窗口',
       submenu: [
-        { label: '最小化', accelerator: 'CmdOrCtrl+M', role: 'minimize' },
-        { label: '关闭', accelerator: 'CmdOrCtrl+W', role: 'close' },
-        { type: 'separator' },
-        { label: '全部置于顶层', role: 'front' }
+        { label: '最小化', accelerator: 'CmdOrCtrl+M', role: 'minimize' as const },
+        { label: '关闭', accelerator: 'CmdOrCtrl+W', role: 'close' as const },
+        { type: 'separator' as const },
+        { label: '全部置于顶层', role: 'front' as const }
       ]
     })
   }
@@ -149,7 +152,7 @@ function createMenu() {
   // 帮助菜单
   template.push({
     label: '帮助',
-    role: 'help',
+    role: 'help' as const,
     submenu: [
       {
         label: '了解更多',
@@ -160,7 +163,7 @@ function createMenu() {
     ]
   })
 
-  const menu = Menu.buildFromTemplate(template)
+  const menu = Menu.buildFromTemplate(template as Electron.MenuItemConstructorOptions[])
   Menu.setApplicationMenu(menu)
 }
 
