@@ -1,0 +1,74 @@
+#!/bin/bash
+
+# 修复数可信终端 - 移除 quarantine 标记
+
+cd "$(dirname "$0")"
+
+APP_PATH="/Applications/数可信终端.app"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+DMG_APP_PATH="$(dirname "$(dirname "$(dirname "$SCRIPT_DIR")")")/数可信终端.app"
+
+echo "========================================="
+echo "  数可信终端 - 修复工具"
+echo "========================================="
+echo ""
+
+# 尝试多个可能的路径
+TARGET_PATHS=()
+if [ -d "$APP_PATH" ]; then
+    TARGET_PATHS+=("$APP_PATH")
+fi
+if [ -d "$DMG_APP_PATH" ] && [[ "$DMG_APP_PATH" == *".dmg"* ]]; then
+    TARGET_PATHS+=("$DMG_APP_PATH")
+fi
+
+# 在当前目录附近找
+if [ ${#TARGET_PATHS[@]} -eq 0 ]; then
+    echo "正在查找应用..."
+    SEARCH_DIR="$(dirname "$(dirname "$(dirname "$SCRIPT_DIR")")")"
+    FOUND_APP=$(find "$SEARCH_DIR" -maxdepth 2 -name "数可信终端.app" 2>/dev/null | head -1)
+    if [ -n "$FOUND_APP" ]; then
+        TARGET_PATHS+=("$FOUND_APP")
+    fi
+fi
+
+if [ ${#TARGET_PATHS[@]} -eq 0 ]; then
+    echo "❌ 未找到数可信终端.app"
+    echo ""
+    echo "请先将"数可信终端"拖拽到 Applications 文件夹，"
+    echo "然后再运行此工具。"
+    echo ""
+    echo "按回车键退出..."
+    read
+    exit 1
+fi
+
+for TARGET in "${TARGET_PATHS[@]}"; do
+    echo "正在修复: $TARGET"
+
+    # 移除 quarantine 标记
+    xattr -cr "$TARGET" 2>/dev/null
+
+    if [ $? -eq 0 ]; then
+        echo "✅ 修复成功！"
+    else
+        echo "⚠️  尝试用 sudo 权限修复..."
+        sudo xattr -cr "$TARGET" 2>/dev/null
+        if [ $? -eq 0 ]; then
+            echo "✅ 修复成功！"
+        else
+            echo "❌ 修复失败"
+        fi
+    fi
+done
+
+echo ""
+echo "========================================="
+echo "现在可以正常打开数可信终端了！"
+echo "========================================="
+echo ""
+echo "提示：建议先将应用拖拽到 Applications 文件夹"
+echo "      然后从 Applications 文件夹中打开。"
+echo ""
+echo "按回车键退出..."
+read
